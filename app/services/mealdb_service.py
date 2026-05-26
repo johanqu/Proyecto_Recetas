@@ -65,3 +65,16 @@ class MealDBService:
         
         except Exception as e:
             raise Exception(f"Error inesperado: {str(e)}")
+    
+    
+    def obtener_receta_random(self):
+        try:
+            response = requests.get(f"{self.base_url}/random.php")
+            if response.status_code != 200:
+                return None
+            data = response.json()
+            if not data["meals"]:
+                return None
+            return data["meals"][0]
+        except Exception:
+            return None
