@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block title %}Mi Coleccion - RecetaAPI{% endblock
+%} {% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold">Mi Coleccion de Recetas</h2>
+  <a href="/" class="btn btn-success">+ Agregar Receta</a>
+</div>
+
+{% if recetas %}
+<div class="row">
+  {% for receta in recetas %}
+  <div class="col-md-4 mb-4">
+    <div class="card h-100">
+      <img
+        src="{{ receta.imagen }}"
+        class="card-img-top"
+        alt="{{ receta.nombre }}"
+        style="height: 200px; object-fit: cover"
+      />
+      <div class="card-body">
+        <h5 class="card-title fw-bold">{{ receta.nombre }}</h5>
+        <p class="text-muted mb-1">
+          <strong>Categoria:</strong> {{ receta.categoria }}
+        </p>
+        <p class="text-muted"><strong>Area:</strong> {{ receta.area }}</p>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <a
+          href="/recetas/{{ receta.id }}"
+          class="btn btn-outline-success btn-sm"
+          >Ver detalle</a
+        >
+        <form action="/recetas/{{ receta.id }}/eliminar" method="post">
+          <button type="submit" class="btn btn-outline-danger btn-sm">
+            Eliminar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="text-center py-5">
+  <h4 class="text-muted">No tienes recetas guardadas todavia</h4>
+  <p class="text-muted">Busca una receta y guardala en tu coleccion</p>
+  <a href="/" class="btn btn-success">Buscar recetas</a>
+</div>
+{% endif %} {% endblock %}
