@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from config.database import get_db
 from app.models.receta import Receta
 from app.services.mealdb_service import MealDBService
+import requests as req
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -17,7 +18,6 @@ def index(request: Request, nombre: str = None, db: Session = Depends(get_db)):
     error = None
     recetas_populares = []
 
-    # Trae 4 recetas random para mostrar en el inicio
     for _ in range(4):
         r = service.obtener_receta_random()
         if r:
@@ -41,6 +41,60 @@ def index(request: Request, nombre: str = None, db: Session = Depends(get_db)):
         }
     )
 
+# Pagina explorar recetas
+@router.get("/explorar", response_class=HTMLResponse)
+def explorar(request: Request, categoria: str = None):
+    recetas = []
+    categorias = service.obtener_categorias()
+
+    if categoria:
+        resultado = service.buscar_por_categoria(categoria)
+        if resultado:
+            recetas = resultado
+    else:
+        for _ in range(12):
+            r = service.obtener_receta_random()
+            if r:
+                recetas.append(r)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="explorar.html",
+        context={
+            "recetas": recetas,
+            "categorias": categorias,
+            "categoria_actual": categoria
+        }
+    )
+
+# Detalle de receta desde explorar
+@router.get("/explorar/{id_meal}", response_class=HTMLResponse)
+def detalle_explorar(request: Request, id_meal: str):
+    try:
+        response = req.get(f"https://www.themealdb.com/api/json/v1/1/lookup.php?i={id_meal}")
+        data = response.json()
+        if not data["meals"]:
+            return RedirectResponse(url="/explorar")
+        receta = data["meals"][0]
+
+        ingredientes = []
+        for i in range(1, 21):
+            nombre_ing = receta.get(f"strIngredient{i}")
+            medida_ing = receta.get(f"strMeasure{i}")
+            if nombre_ing and nombre_ing.strip():
+                ingredientes.append({"nombre": nombre_ing, "medida": medida_ing})
+
+        return templates.TemplateResponse(
+            request=request,
+            name="detalle_explorar.html",
+            context={
+                "receta": receta,
+                "ingredientes": ingredientes
+            }
+        )
+    except Exception:
+        return RedirectResponse(url="/explorar")
+
 # Lista de recetas guardadas
 @router.get("/recetas", response_class=HTMLResponse)
 def lista_recetas(request: Request, db: Session = Depends(get_db)):
@@ -51,7 +105,7 @@ def lista_recetas(request: Request, db: Session = Depends(get_db)):
         context={"recetas": recetas}
     )
 
-# Detalle de una receta
+# Detalle de una receta guardada
 @router.get("/recetas/{id}", response_class=HTMLResponse)
 def detalle_receta(request: Request, id: int, db: Session = Depends(get_db)):
     receta = db.query(Receta).filter(Receta.id == id).first()

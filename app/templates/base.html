@@ -16,6 +16,9 @@
       body {
         background-color: #f8f9fa;
         font-family: "Segoe UI", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
       .navbar {
         background-color: #1a5c38;
@@ -53,6 +56,10 @@
       footer {
         background-color: #1a5c38;
         color: white;
+        margin-top: auto;
+      }
+      .contenido {
+        flex: 1;
       }
     </style>
   </head>
@@ -77,7 +84,7 @@
               <a class="nav-link" href="/">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/recetas">Recetas</a>
+              <a class="nav-link" href="/explorar">Explorar</a>
             </li>
             <li class="nav-item">
               <a class="btn btn-coleccion" href="/recetas">
@@ -89,9 +96,9 @@
       </div>
     </nav>
 
-    {% block content %}{% endblock %}
+    <div class="contenido">{% block content %}{% endblock %}</div>
 
-    <footer class="py-4 mt-5">
+    <footer class="py-4">
       <div class="container d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2">
           <i class="bi bi-egg-fried fs-5"></i>

@@ -1,0 +1,62 @@
+{% extends "base.html" %} {% block title %}{{ receta.strMeal }} - RecetaAPI{%
+endblock %} {% block content %}
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-5 mb-4">
+      <img
+        src="{{ receta.strMealThumb }}"
+        class="img-fluid rounded shadow"
+        alt="{{ receta.strMeal }}"
+      />
+    </div>
+
+    <div class="col-md-7">
+      <h2 class="fw-bold mb-3">{{ receta.strMeal }}</h2>
+
+      <div class="mb-3">
+        <span class="badge me-2" style="background-color: #1a5c38"
+          >{{ receta.strCategory }}</span
+        >
+        <span class="badge bg-secondary">{{ receta.strArea }}</span>
+      </div>
+
+      <h5 class="fw-bold mt-4">Ingredientes</h5>
+      <ul class="list-group list-group-flush mb-4">
+        {% for ingrediente in ingredientes %}
+        <li class="list-group-item d-flex justify-content-between px-0">
+          <span>{{ ingrediente.nombre }}</span>
+          <span class="text-muted">{{ ingrediente.medida }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <div class="d-flex gap-2">
+        <a href="/explorar" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+        <form action="/guardar" method="post">
+          <input type="hidden" name="nombre" value="{{ receta.strMeal }}" />
+          <button
+            type="submit"
+            class="btn text-white fw-bold"
+            style="background-color: #1a5c38"
+          >
+            <i class="bi bi-heart me-1"></i>Guardar en mi coleccion
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <h5 class="fw-bold">Instrucciones</h5>
+      <div class="card border-0 shadow-sm p-4">
+        <p style="white-space: pre-line">{{ receta.strInstructions }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
