@@ -15,6 +15,13 @@ service = MealDBService()
 def index(request: Request, nombre: str = None, db: Session = Depends(get_db)):
     receta = None
     error = None
+    recetas_populares = []
+
+    # Trae 4 recetas random para mostrar en el inicio
+    for _ in range(4):
+        r = service.obtener_receta_random()
+        if r:
+            recetas_populares.append(r)
 
     if nombre:
         try:
@@ -27,7 +34,11 @@ def index(request: Request, nombre: str = None, db: Session = Depends(get_db)):
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context={"receta": receta, "error": error}
+        context={
+            "receta": receta,
+            "error": error,
+            "recetas_populares": recetas_populares
+        }
     )
 
 # Lista de recetas guardadas
