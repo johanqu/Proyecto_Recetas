@@ -1,50 +1,96 @@
 {% extends "base.html" %} {% block title %}Mi Coleccion - RecetaAPI{% endblock
 %} {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h2 class="fw-bold">Mi Coleccion de Recetas</h2>
-  <a href="/" class="btn btn-success">+ Agregar Receta</a>
-</div>
-
-{% if recetas %}
-<div class="row">
-  {% for receta in recetas %}
-  <div class="col-md-4 mb-4">
-    <div class="card h-100">
-      <img
-        src="{{ receta.imagen }}"
-        class="card-img-top"
-        alt="{{ receta.nombre }}"
-        style="height: 200px; object-fit: cover"
-      />
-      <div class="card-body">
-        <h5 class="card-title fw-bold">{{ receta.nombre }}</h5>
-        <p class="text-muted mb-1">
-          <strong>Categoria:</strong> {{ receta.categoria }}
+<div
+  style="
+    background: linear-gradient(135deg, #e8f5e9 0%, #f0f7f0 100%);
+    padding: 40px 0;
+  "
+>
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="fw-bold mb-1">Mi Coleccion</h2>
+        <p class="text-muted mb-0">
+          Tienes {{ recetas|length }} receta{% if recetas|length != 1 %}s{%
+          endif %} guardada{% if recetas|length != 1 %}s{% endif %}
         </p>
-        <p class="text-muted"><strong>Area:</strong> {{ receta.area }}</p>
       </div>
-      <div class="card-footer d-flex justify-content-between">
-        <a
-          href="/recetas/{{ receta.id }}"
-          class="btn btn-outline-success btn-sm"
-          >Ver detalle</a
-        >
-        <form action="/recetas/{{ receta.id }}/eliminar" method="post">
-          <button type="submit" class="btn btn-outline-danger btn-sm">
-            Eliminar
-          </button>
-        </form>
-      </div>
+      <a
+        href="/explorar"
+        class="btn text-white fw-bold"
+        style="background-color: #1a5c38"
+      >
+        <i class="bi bi-plus-lg me-1"></i>Agregar Receta
+      </a>
     </div>
   </div>
-  {% endfor %}
 </div>
 
-{% else %}
-<div class="text-center py-5">
-  <h4 class="text-muted">No tienes recetas guardadas todavia</h4>
-  <p class="text-muted">Busca una receta y guardala en tu coleccion</p>
-  <a href="/" class="btn btn-success">Buscar recetas</a>
+<div class="container mt-4">
+  {% if recetas %}
+  <div class="row g-3">
+    {% for receta in recetas %}
+    <div class="col-md-4 col-sm-6">
+      <div class="card border-0 shadow-sm h-100">
+        <img
+          src="{{ receta.imagen }}"
+          class="card-img-top"
+          alt="{{ receta.nombre }}"
+          style="height: 200px; object-fit: cover"
+        />
+        <div class="card-body">
+          <h5 class="card-title fw-bold mb-1">{{ receta.nombre }}</h5>
+          <div class="mb-2">
+            <span
+              class="badge me-1"
+              style="background-color: #e8f5e9; color: #1a5c38"
+              >{{ receta.categoria }}</span
+            >
+            <span class="badge bg-secondary">{{ receta.area }}</span>
+          </div>
+          <small class="text-muted">
+            <i class="bi bi-calendar me-1"></i>
+            Guardada el {{ receta.fecha_guardado.strftime('%d/%m/%Y') if
+            receta.fecha_guardado else '' }}
+          </small>
+        </div>
+        <div
+          class="card-footer border-0 bg-white d-flex justify-content-between align-items-center"
+        >
+          <a
+            href="/recetas/{{ receta.id }}"
+            class="btn btn-outline-success btn-sm"
+          >
+            <i class="bi bi-eye me-1"></i>Ver detalle
+          </a>
+          <form action="/recetas/{{ receta.id }}/eliminar" method="post">
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash me-1"></i>Eliminar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-heart" style="font-size: 4rem; color: #1a5c38"></i>
+    <h4 class="fw-bold mt-3">Tu coleccion esta vacia</h4>
+    <p class="text-muted">
+      Explora recetas y guardalas aqui para acceder a ellas cuando quieras
+    </p>
+    <a
+      href="/explorar"
+      class="btn text-white fw-bold px-4"
+      style="background-color: #1a5c38"
+    >
+      <i class="bi bi-compass me-1"></i>Explorar recetas
+    </a>
+  </div>
+  {% endif %}
 </div>
-{% endif %} {% endblock %}
+
+{% endblock %}
